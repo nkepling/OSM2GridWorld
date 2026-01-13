@@ -12,6 +12,7 @@ from rasterio.transform import from_origin
 from scipy.spatial import cKDTree
 import ast
 from pathlib import Path
+from pyproj import Transformer
 
 # --- Configuration ---
 CRS_UTM = "EPSG:26916" 
@@ -132,6 +133,27 @@ def generate_complete_map(lat, lon, dist=200, cache_file=None, filename_prefix="
     transform = from_origin(minx, maxy, 1, 1)
 
     print(f"Generating {out_shape[1]}x{out_shape[0]} grid centered at {lat}, {lon}...")
+
+
+    # --- Precompute Lat/Lon Map ---
+
+    print("Precomputing Lat/Lon map...")
+    rows, cols = np.indices(out_shape)
+    
+    # x = minx + col + 0.5 (half pixel offset)
+    # y = maxy - row - 0.5 (half pixel offset)
+    utm_x_grid = minx + cols + 0.5
+    utm_y_grid = maxy - rows - 0.5
+    
+    # Transform entire grid to Lat/Lon at once
+    transformer = Transformer.from_crs(CRS_UTM, "EPSG:4326", always_xy=True)
+    lon_grid, lat_grid = transformer.transform(utm_x_grid, utm_y_grid)
+    
+    # Stack into (H, W, 2) array. Format: [lat, lon]
+    latlon_grid = np.stack((lat_grid, lon_grid), axis=-1)
+    
+    np.save(output_dir / f"{filename_prefix}_latlon_map.npy", latlon_grid)
+    print(f"Saved '{filename_prefix}_latlon_map.npy'")
 
     # if cache_file and Path(cache_file).exists():
     #     print(f"Loading cached data from '{cache_file}'...")
@@ -374,6 +396,29 @@ def visualize_roads_and_obstacles(filename_prefix, output_dir):
     save_path = output_dir / f"{filename_prefix}_obstacle_and_road_map.png"
     plt.savefig(save_path, dpi=150, bbox_inches='tight')
     print(f"Saved visualization to {save_path}")
+
+
+def grid_to_latlon(row, col, lat_center, lon_center, dist, crs_utm=CRS_UTM):
+    """
+    Converts a specific grid cell (row, col) back to Latitude and Longitude.
+    Requires the original center point and distance used to generate the map.
+    """
+
+    center_point = Point(lon_center, lat_center)
+    gdf_center = gpd.GeoDataFrame(geometry=[center_point], crs="EPSG:4326").to_crs(crs_utm)
+    cx, cy = gdf_center.geometry[0].x, gdf_center.geometry[0].y
+
+    minx = cx - dist
+    maxy = cy + dist
+
+    utm_x = minx + col + 0.5
+    utm_y = maxy - row - 0.5 
+
+    pt_utm = Point(utm_x, utm_y)
+    gdf_pt = gpd.GeoDataFrame(geometry=[pt_utm], crs=crs_utm)
+    gdf_wgs = gdf_pt.to_crs("EPSG:4326")
+
+    return gdf_wgs.geometry[0].y, gdf_wgs.geometry[0].x
 
 
 if __name__ == "__main__":
