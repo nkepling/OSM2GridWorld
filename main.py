@@ -82,6 +82,13 @@ def main():
 
     visualize_roads_and_obstacles(filename_prefix="huntsville", output_dir="data/osm/huntsville/")
 
+    lat_long_map = np.load(pathlib.Path("data/osm/huntsville/huntsville_latlon_map.npy"))
+
+    print("Four Corners of the map (lat, lon): ", lat_long_map[0,0], lat_long_map[0,-1], lat_long_map[-1,0], lat_long_map[-1,-1])
+
+
+
+
     
     
 
