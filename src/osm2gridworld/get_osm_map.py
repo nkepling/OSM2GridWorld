@@ -134,6 +134,50 @@ def create_colored_map_with_legend(semantic_grid, label_map, filename="nashville
     plt.close()
     print(f"Visualization saved to '{filename}'")
 
+def create_per_feature_map(road_layer, build_layer, filename="per_feature_map.png"):
+    """
+    Generates a visualization where each individual road and building
+    is rendered with its own unique color.
+
+    Args:
+        road_layer (np.ndarray): 2D grid with per-road unique IDs (0 = no road).
+        build_layer (np.ndarray): 2D grid with per-building unique IDs (0 = no building).
+        filename (str): The output filename for the image.
+    """
+    h, w = road_layer.shape
+    image = np.full((h, w, 3), 220, dtype=np.uint8)  # light gray background
+
+    rng = np.random.RandomState(42)
+
+    road_ids = np.unique(road_layer)
+    road_ids = road_ids[road_ids > 0]
+    for rid in road_ids:
+        color = rng.randint(80, 220, size=3).astype(np.uint8)
+        # push toward blue/gray tones for roads
+        color[2] = np.clip(color[2] + 60, 0, 255).astype(np.uint8)
+        image[road_layer == rid] = color
+
+    build_ids = np.unique(build_layer)
+    build_ids = build_ids[build_ids > 0]
+    for bid in build_ids:
+        color = rng.randint(80, 220, size=3).astype(np.uint8)
+        # push toward warm tones for buildings
+        color[0] = np.clip(color[0] + 60, 0, 255).astype(np.uint8)
+        image[build_layer == bid] = color
+
+    fig, ax = plt.subplots(figsize=(12, 12))
+    ax.imshow(image, origin='upper', interpolation='nearest')
+    ax.set_title(f"Per-Feature Map ({len(road_ids)} Roads, {len(build_ids)} Buildings)", fontsize=16, pad=10)
+    ax.tick_params(bottom=False, left=False, labelbottom=False, labelleft=False)
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+
+    plt.tight_layout()
+    plt.savefig(filename, dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"Per-feature visualization saved to '{filename}'")
+
+
 def generate_complete_map(lat, lon, dist=200, cache_file=None, filename_prefix="nashville", output_dir=None):
     """
     Downloads OSM data, rasterizes it into semantic grids, and saves the resulting maps.
@@ -326,6 +370,13 @@ def generate_complete_map(lat, lon, dist=200, cache_file=None, filename_prefix="
         label_map,
         filename=str(output_dir / f"{filename_prefix}_semantic_legend.png")
     )
+
+    create_per_feature_map(
+        road_layer,
+        build_layer,
+        filename=str(output_dir / f"{filename_prefix}_per_feature_map.png")
+    )
+
     return road_cost_map
 
 def create_colored_map_with_context_and_path(semantic_grid, label_map, road_cost_map, target_path, context_description, filename="nashville_path_visualized.png"):

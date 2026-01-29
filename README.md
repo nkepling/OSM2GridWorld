@@ -16,7 +16,7 @@ Navigate to the project directory.
 cd OSM2GridWorld
 ```
 
-Create a virtual environment. 
+Create a virtual environment. ***
 
 ```bash
 uv venv --python 3.13
@@ -111,11 +111,13 @@ def get_huntsville_height_map(lat,lon):
 
 ### Generating Gridworld Maps from OSM Data
 
-The main method to generate the rasterized maps is `generate_complete_map` in `osm2gridworld/get_osm_map.py`. This function saves the following files to the specified output directory:
+
+
+The main method to generate the rasterized maps is `generate_complete_map` in `osm2gridworld/get_osm_map.py` simply run [examples/get_nashville_osm_data.py](examples/get_nashville_osm_data.py) to generate the following files.
 
 - `{filename_prefix}_obstacle_map.npy`: A numpy array representing the obstacle map, where obstacles are marked.
 - `{filename_prefix}_road_map.npy`: A numpy array representing the road map, where roads
-- `{filename_prefix}_latlon_map.png`: A numpy array of latitude and longitude coordinates for each grid cell.
+- `{filename_prefix}_latlon_map.npy`: A numpy array of latitude and longitude coordinates for each grid cell.
 - `{filename_prefix}_semantic_id_map.npy`: Assigns semantic IDs (an integer) to each semantic category in the map (e.g., road, building, park, water, etc.).
 - `{filename_prefix}_semantic_metadata.json`: Maps semantic IDs to their corresponding OSM tags and descriptions.
 - `{filename_prefix}_context_id_map.npy`:  Maps grid cells to nearby amenties (i.e a road cell may have a nearby restaurant amenity).
@@ -123,5 +125,6 @@ The main method to generate the rasterized maps is `generate_complete_map` in `o
 ### Example coordinates: 
 
 `lat, lon =  34.737235, -86.691023` Hunstville, AL
+`lat, lon = 36.160044 -86.779407` Nashville
 
 
