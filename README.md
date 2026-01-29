@@ -19,7 +19,7 @@ cd OSM2GridWorld
 Create a virtual environment. 
 
 ```bash
-uv venv
+uv venv --python 3.13
 ```
 Activate the virtual environment.
 
@@ -30,7 +30,7 @@ source .venv/bin/activate
 Install the package in editable mode.
 
 ```bash
-pip install -e .
+uv pip install -e .
 ```
 
 ## Usage
