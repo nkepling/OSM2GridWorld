@@ -35,7 +35,7 @@ uv pip install -e .
 
 ## Usage
 
-See `main.py` for an example of how to use the library to generate a gridworld environment and visualize height maps from LiDAR data. You can simply run the `main.py` script which will download data and generate maps for Huntsville, AL. Data should be stored in the `data/` directory.
+See `main.py` for an example of how to use the library to generate a gridworld environment and visualize height maps from LiDAR data. You can simply run the `main.py` script which will download data and generate maps for Huntsville, AL. Data should be stored in the `data/` directory. See [examples/get_nashville_osm_data.py](examples/get_nashville_osm_data.py) for how to generate OSM map data. 
 
 ### Getting LiDAR Data
 
@@ -110,8 +110,6 @@ def get_huntsville_height_map(lat,lon):
 
 
 ### Generating Gridworld Maps from OSM Data
-
-
 
 The main method to generate the rasterized maps is `generate_complete_map` in `osm2gridworld/get_osm_map.py` simply run [examples/get_nashville_osm_data.py](examples/get_nashville_osm_data.py) to generate the following files.
 
