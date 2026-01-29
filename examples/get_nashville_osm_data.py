@@ -10,7 +10,7 @@ def main():
     lon=-86.779407
 
     FILENAME_PREFIX = "nashville"
-    OUTPUT_DIR = "data/osm_data/Nashville"
+    OUTPUT_DIR = "data/osm/nashville"
 
     #NOTE: dist is the distnace from center of the map to its edge. 
     generate_complete_map(lat, lon, dist=500, cache_file=None, filename_prefix=FILENAME_PREFIX, output_dir=OUTPUT_DIR)

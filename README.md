@@ -119,6 +119,8 @@ The main method to generate the rasterized maps is `generate_complete_map` in `o
 - `{filename_prefix}_semantic_id_map.npy`: Assigns semantic IDs (an integer) to each semantic category in the map (e.g., road, building, park, water, etc.).
 - `{filename_prefix}_semantic_metadata.json`: Maps semantic IDs to their corresponding OSM tags and descriptions.
 - `{filename_prefix}_context_id_map.npy`:  Maps grid cells to nearby amenties (i.e a road cell may have a nearby restaurant amenity).
+- `{filename_prefix}_semantic_legend.png}`: Visualisation of "broad" semantic categories. 
+- `{filename_prefix}_per_feature_map.png}`: Visualisation of "richer" available sematnic labels. No legend just lots of colors.
 
 ### Example coordinates: 
 
